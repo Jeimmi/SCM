@@ -11,26 +11,44 @@
  *
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
+import java.nio.file.Paths;
 
 public class scm {
+	
+	public void CheckSum(File file) throws IOException{
+		String content;
+		content = new String(Files.readAllBytes(Paths.get(file.getPath())));
+		String s = content;
+		int checkSumLength = 4;
+		int checkSumTotal = 0;
+		int[] checkSumWeights = new int[checkSumLength];
+		checkSumWeights[0] = 1;
+		checkSumWeights[1] = 3;
+		checkSumWeights[2] = 11;
+		checkSumWeights[3] = 17;
 
-    public static void main(String[] args) throws IOException
-    {
-    	
-       // File sourceFolder = new File("C:\\Users\\wills\\Desktop\\test_source");
-
-        //File destinationFolder = new File("\\Users\\wills\\Desktop\\test_destination" + sourceFolder.getName());
-
-       // createRepo(sourceFolder, destinationFolder);
-    }
-
-    private static void createRepo(File sourceFolder, File destinationFolder) throws IOException
+		for (int i = 0; i < s.length(); i++){
+		    char c = s.charAt(i);
+		    int asciiCharacter = (int)c;
+		   
+		    int index = i % checkSumLength;
+		    
+		    int checkSumValue = checkSumWeights[index]* asciiCharacter;
+		    checkSumTotal += checkSumValue;
+		    
+		    //Process char
+		   
+		}
+		 System.out.println(checkSumTotal);
+	}
+	
+    private void createRepo(File sourceFolder, File destinationFolder) throws IOException
     {
         destinationFolder.mkdir();
         if (sourceFolder.isDirectory())
@@ -51,10 +69,22 @@ public class scm {
         else
         {
             // Creates directory with file name
-            File leafDirectory = new File(destinationFolder.toString() + "\\" + sourceFolder.getName());
+            File leafDirectory = new File(destinationFolder.toString() + "/" + sourceFolder.getName());
             // Copies file into directory with its name
             Files.copy(sourceFolder.toPath(), leafDirectory.toPath());
         }
+    }
+	
+
+    public static void main(String[] args) throws IOException
+    {
+    	scm s = new scm();
+        File sourceFolder = new File("/Users/Jeimmi/Desktop/test_source/h");
+
+        File destinationFolder = new File("/Users/Jeimmi/Desktop/test_destination" + sourceFolder.getName());
+
+        //createRepo(sourceFolder, destinationFolder);
+    	s.CheckSum(sourceFolder);
     }
 
 
