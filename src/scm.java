@@ -22,9 +22,10 @@ public class scm {
 
     public static void main(String[] args) throws IOException
     {
-        File sourceFolder = new File("/Users/Jeimmi/Desktop/test_source");
+    	
+        File sourceFolder = new File("C:\\Users\\wills\\Desktop\\test_source");
 
-        File destinationFolder = new File("/Users/Jeimmi/Desktop/test_destination" + sourceFolder.getName());
+        File destinationFolder = new File("\\Users\\wills\\Desktop\\test_destination" + sourceFolder.getName());
 
         createRepo(sourceFolder, destinationFolder);
     }
