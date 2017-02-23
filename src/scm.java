@@ -23,11 +23,11 @@ public class scm {
     public static void main(String[] args) throws IOException
     {
     	
-        File sourceFolder = new File("C:\\Users\\wills\\Desktop\\test_source");
+       // File sourceFolder = new File("C:\\Users\\wills\\Desktop\\test_source");
 
-        File destinationFolder = new File("\\Users\\wills\\Desktop\\test_destination" + sourceFolder.getName());
+        //File destinationFolder = new File("\\Users\\wills\\Desktop\\test_destination" + sourceFolder.getName());
 
-        createRepo(sourceFolder, destinationFolder);
+       // createRepo(sourceFolder, destinationFolder);
     }
 
     private static void createRepo(File sourceFolder, File destinationFolder) throws IOException
@@ -56,34 +56,6 @@ public class scm {
             Files.copy(sourceFolder.toPath(), leafDirectory.toPath());
         }
     }
-    public String checksum(File file) throws Exception{
-    	MessageDigest md = MessageDigest.getInstance("SHA1");
-    	FileInputStream fis = new FileInputStream(file.getName());
-    	
-        byte[] byteArray = new byte[1024];
-        int byteCount = 0;
-    	
-      //Read file data and update in message digest
-        while ((byteCount = fis.read(byteArray)) != -1) {
-            md.update(byteArray, 0, byteCount);
-        };
-        
-        fis.close();
-        
-        //Get the hash's bytes
-        byte[] bytes = md.digest();
-         
-        //This bytes[] has bytes in decimal format;
-        //Convert it to hexadecimal format
-        StringBuilder sb = new StringBuilder();
-        for(int i=0; i< bytes.length ;i++)
-        {
-            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-        }
-         
-        //return complete hash
-       return sb.toString();
-        
-    }
+
 
 }
