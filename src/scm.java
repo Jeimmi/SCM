@@ -21,8 +21,12 @@ import java.nio.file.Paths;
 
 public class scm {
 	
-	public void CheckSum(File file) throws IOException{
+	
+	
+	public String CheckSum(File file) throws IOException{
 		String content;
+		String filesize = Long.toString(file.length());
+		
 		content = new String(Files.readAllBytes(Paths.get(file.getPath())));
 		String s = content;
 		int checkSumLength = 4;
@@ -41,15 +45,19 @@ public class scm {
 		    
 		    int checkSumValue = checkSumWeights[index]* asciiCharacter;
 		    checkSumTotal += checkSumValue;
-		    
-		    //Process char
 		   
 		}
-		 System.out.println(checkSumTotal);
+		String artifactName = Integer.toString(checkSumTotal)+"."+filesize;
+		 //System.out.println("ChecksumTotal: "+checkSumTotal);
+		 //System.out.println("FileSize: "+filesize);
+		 //System.out.println("ArtifactName: "+artifactName);
+		 return artifactName;
 	}
 	
     private void createRepo(File sourceFolder, File destinationFolder) throws IOException
     {
+    	String artifactName = CheckSum(sourceFolder)+".txt";
+    	
         destinationFolder.mkdir();
         if (sourceFolder.isDirectory())
         {
@@ -62,7 +70,7 @@ public class scm {
                 // Creates a new File instance from a parent abstract pathname and a child pathname string.
                 File sourceTemp = new File(sourceFolder, file);
                 File destinationTemp = new File(destinationFolder, file);
-
+                
                 createRepo(sourceTemp, destinationTemp);
             }
         }
@@ -70,8 +78,15 @@ public class scm {
         {
             // Creates directory with file name
             File leafDirectory = new File(destinationFolder.toString() + "/" + sourceFolder.getName());
+            
             // Copies file into directory with its name
             Files.copy(sourceFolder.toPath(), leafDirectory.toPath());
+            
+            //Copies the file and renames it 
+            File newFileName = new File(destinationFolder.toString() + "/" +artifactName );
+            Files.copy(leafDirectory.toPath(),newFileName.toPath());
+            
+            
         }
     }
 	
@@ -79,11 +94,11 @@ public class scm {
     public static void main(String[] args) throws IOException
     {
     	scm s = new scm();
-        File sourceFolder = new File("/Users/Jeimmi/Desktop/test_source/h");
+        File sourceFolder = new File("/Users/Jeimmi/Desktop/test_source/h.txt");
 
         File destinationFolder = new File("/Users/Jeimmi/Desktop/test_destination" + sourceFolder.getName());
 
-        //createRepo(sourceFolder, destinationFolder);
+        s.createRepo(sourceFolder, destinationFolder);
     	s.CheckSum(sourceFolder);
     }
 
