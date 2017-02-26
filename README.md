@@ -1,5 +1,5 @@
 #SCM Team: WJG
-##Class section: CECS 543 Sec 01
+######Class section: CECS 543 Sec 01
 ##Contact Information: 
 - Govinda Escobar
 - Jeimmi Gomez: jgm94ez@gmail.com
