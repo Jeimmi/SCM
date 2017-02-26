@@ -1,5 +1,7 @@
-#SCM Team: WJG
-######Class section: CECS 543 Sec 01
+#SCM 
+
+##Team: WJG Class section: CECS 543 Sec 01
+
 ##Contact Information: 
 - Govinda Escobar
 - Jeimmi Gomez: jgm94ez@gmail.com
@@ -22,6 +24,6 @@ SCM.java, Manifest.java
   ##Usage
 
   ##Extra Features
-  
+
   ##Bugs
 
