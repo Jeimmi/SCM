@@ -115,10 +115,24 @@ public class scm {
 
     public static void main(String[] args) throws IOException
     {
-    	scm s = new scm();
-        File sourceFolder = new File("C:\\Users\\wills\\Desktop\\test_source");
+    	//Get input source and target path from user
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Input path for Windows using \\ and Apple using /");
+		System.out.println("windows ex: C:\\Users\\wills\\Desktop");
+		System.out.println("Apple ex: /Users/wills/Desktop");
+		System.out.println("Enter Path for Source Folder");
+		String sourcePath = scanner.nextLine();
+		System.out.println("Enter Path for Target Repo Folder");
+		String targetPath = scanner.nextLine();   	
+    	scm s = new scm();   	
+    	
+    	//sourcePath = "C:\\Users\\wills\\Desktop\\test_source";
+   
+        File sourceFolder = new File(sourcePath);
 
-        File destinationFolder = new File("C:\\Users\\wills\\Desktop\\test_destination" + sourceFolder.getName());
+        //targetPath = "C:\\Users\\wills\\Desktop\\test_destination" + sourceFolder.getName();
+        
+        File destinationFolder = new File(targetPath + sourceFolder.getName());
         
         
         Manifest manifestObject = new Manifest(sourceFolder.getPath(), destinationFolder.getPath(),"createRepo");
@@ -139,14 +153,14 @@ public class scm {
         for(int i = 0; i < manifestObject.mArtifactFileNames.size() - 1; i++) {
 	    	String sourceFileName = manifestObject.mSourceFileNames.get(i);
 	    	String artifactFileName = manifestObject.mArtifactFileNames.get(i);
-	    	String sourcePath = manifestObject.mSourcePaths.get(i);
+	    	String sourcePathName = manifestObject.mSourcePaths.get(i);
 
-	    	writeToFile(manifestTextFile, sourceFileName + ", " + artifactFileName + ", " + sourcePath);
+	    	writeToFile(manifestTextFile, sourceFileName + ", " + artifactFileName + ", " + sourcePathName);
 
 	    	//mani.writeToFile(manifest, artifactFileName);
 	    	//mani.writeToFile(manifest, sourceFileName);
 
-	    	System.out.println(sourceFileName + ", " + artifactFileName + ", " + sourcePath);
+	    	System.out.println(sourceFileName + ", " + artifactFileName + ", " + sourcePathName);
 	    }
     	
     }
