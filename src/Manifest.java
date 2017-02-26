@@ -2,6 +2,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -14,6 +15,9 @@ public class Manifest {
 	private String mUserCommand;
 	private String mSourcePath;
 	private String mTargetPath;
+	private ArrayList<String> mSourceFileNames;
+	private ArrayList<String> mArtifactFileNames;
+	private ArrayList<String> mSourcePaths;
 	
 	public Manifest(String source,String target,String userCom){
 		//Get the date and time of the manifest creation
@@ -23,6 +27,9 @@ public class Manifest {
 		DateFormat manifestDate = new SimpleDateFormat("yyyyMMdd");
 		DateFormat manifestTime = new SimpleDateFormat("HHmm");
 		Date dateobj = new Date();
+		mSourceFileNames = new ArrayList<String>();
+		mArtifactFileNames = new ArrayList<String>();
+		mSourcePaths = new ArrayList<String>();
 		
 		String mManifestTitle = "Manifest_" + manifestDate + "_" + manifestTime;
 		
@@ -52,6 +59,13 @@ public class Manifest {
 		}
 
 	}
+	
+	public void addFileNames(String sourcefileName, String artifactFileName, String sourcePath) {
+		mSourceFileNames.add(sourcefileName);
+		mArtifactFileNames.add(artifactFileName);
+		mSourcePaths.add(sourcePath);
+	}
+	
 	public String getmManifestTitle() {
 		return mManifestTitle;
 	}
