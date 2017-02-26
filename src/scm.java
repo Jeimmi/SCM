@@ -23,70 +23,38 @@ public class scm {
 	
 	
 	
-	public String CheckSum(File file) throws IOException{
-		String content;
-		String filesize = Long.toString(file.length());
-		
-		content = new String(Files.readAllBytes(Paths.get(file.getPath())));
-		String s = content;
-		int checkSumLength = 4;
-		int checkSumTotal = 0;
-		int[] checkSumWeights = new int[checkSumLength];
-		checkSumWeights[0] = 1;
-		checkSumWeights[1] = 3;
-		checkSumWeights[2] = 11;
-		checkSumWeights[3] = 17;
-
-		for (int i = 0; i < s.length(); i++){
-		    char c = s.charAt(i);
-		    int asciiCharacter = (int)c;
-		   
-		    int index = i % checkSumLength;
-		    
-		    int checkSumValue = checkSumWeights[index]* asciiCharacter;
-		    checkSumTotal += checkSumValue;
-		   
-		}
-		String artifactName = Integer.toString(checkSumTotal)+"."+filesize;
-		 //System.out.println("ChecksumTotal: "+checkSumTotal);
-		 //System.out.println("FileSize: "+filesize);
-		 //System.out.println("ArtifactName: "+artifactName);
-		 return artifactName;
-	}
+	public String checkSum(File file) throws IOException{
+        String temp = new String(Files.readAllBytes(Paths.get(file.getPath())));
+        int tempLength = temp.length();
+        int checkSumTotal = 0;
+        int[] checkSumWeights = new int[] {1, 3, 11, 17};
+        for (int i = 0; i < tempLength; i++){
+            checkSumTotal +=  checkSumWeights[i % 4]* (int)temp.charAt(i);
+        }
+        temp = file.getName();
+        return Integer.toString(checkSumTotal) + "." + Long.toString(file.length()) + temp.substring(temp.lastIndexOf("."));
+    }
 	
-    private void createRepo(File sourceFolder, File destinationFolder) throws IOException
-    {
-    	String artifactName = CheckSum(sourceFolder)+".txt";
-    	
-        destinationFolder.mkdir();
-        if (sourceFolder.isDirectory())
-        {
-            // Returns an array of strings naming the files and directories in sourceFolder
-            String files[] = sourceFolder.list();
+    private void createRepo(File sourceDirectory, File destinationDirectory) throws IOException {
+        destinationDirectory.mkdir();
+        if (sourceDirectory.isDirectory()) {
+            // Returns an array of strings naming the files and directories in sourceDirectory
+            String files[] = sourceDirectory.list();
 
-            // Copies files & directories to destinationFolder
+            // Copies files & directories to destinationDirectory
             for (String file : files)
             {
                 // Creates a new File instance from a parent abstract pathname and a child pathname string.
-                File sourceTemp = new File(sourceFolder, file);
-                File destinationTemp = new File(destinationFolder, file);
-                
+                File sourceTemp = new File(sourceDirectory, file);
+                File destinationTemp = new File(destinationDirectory, file);
                 createRepo(sourceTemp, destinationTemp);
             }
         }
-        else
-        {
+        else {
             // Creates directory with file name
-            File leafDirectory = new File(destinationFolder.toString() + "/" + sourceFolder.getName());
-            
+            File leafDirectory = new File(destinationDirectory.toString(), checkSum(sourceDirectory));
             // Copies file into directory with its name
-            Files.copy(sourceFolder.toPath(), leafDirectory.toPath());
-            
-            //Copies the file and renames it 
-            File newFileName = new File(destinationFolder.toString() + "/" +artifactName );
-            Files.copy(leafDirectory.toPath(),newFileName.toPath());
-            
-            
+            Files.copy(sourceDirectory.toPath(), leafDirectory.toPath());
         }
     }
 	
@@ -94,12 +62,12 @@ public class scm {
     public static void main(String[] args) throws IOException
     {
     	scm s = new scm();
-        File sourceFolder = new File("/Users/Jeimmi/Desktop/test_source/h.txt");
+        File sourceFolder = new File("/Users/Jeimmi/Desktop/test_source/");
 
         File destinationFolder = new File("/Users/Jeimmi/Desktop/test_destination" + sourceFolder.getName());
 
         s.createRepo(sourceFolder, destinationFolder);
-    	s.CheckSum(sourceFolder);
+    	
     }
 
 
