@@ -15,9 +15,9 @@ public class Manifest {
 	private String mUserCommand;
 	private String mSourcePath;
 	private String mTargetPath;
-	private ArrayList<String> mSourceFileNames;
-	private ArrayList<String> mArtifactFileNames;
-	private ArrayList<String> mSourcePaths;
+	public ArrayList<String> mSourceFileNames;
+	public ArrayList<String> mArtifactFileNames;
+	public ArrayList<String> mSourcePaths;
 	
 	public Manifest(String source,String target,String userCom){
 		//Get the date and time of the manifest creation
@@ -34,27 +34,29 @@ public class Manifest {
 		String mManifestTitle = "Manifest_" + manifestDate + "_" + manifestTime;
 		
 	}
-	public void writeToFile(File file, String content){
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-			bw.write(content);
-
-			// no need to close it.
-			//bw.close();
-			System.out.println("Done");
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
+	
+	public void writeToFile(File file, String content) throws IOException
+	{
+	    StringBuilder newFile = new StringBuilder();
+	    String edited = content;
+	    newFile.append(edited);
+	    newFile.append("\n");
+	    FileWriter fstreamWrite = new FileWriter(file,true);
+	    BufferedWriter out = new BufferedWriter(fstreamWrite);
+	    out.write(newFile.toString());
+	    out.close();
 	}
 	
-	public void userCommands(File manifest,String userCom){
+	
+	
+	
+
+	public void userCommands(File manifest,String userCom) throws IOException{
     	String command = null;
 		switch(userCom){
 		case "createRepo":
-			command = userCom+": "+this.getmSourcePath()+" "+this.getmTargetPath();
+			command = userCom+": "+this.getmSourcePath()+" "+this.getmTargetPath()+"\n";
 			writeToFile(manifest, command);
-			System.out.println("end user com");
 			break;	
 		}
 

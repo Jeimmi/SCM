@@ -46,7 +46,7 @@ public class scm {
         return Integer.toString(checkSumTotal) + "." + Long.toString(file.length()) + temp.substring(temp.lastIndexOf("."));
     }
 	
-    private void createRepo(File sourceDirectory, File destinationDirectory) throws IOException {
+    private void createRepo(File sourceDirectory, File destinationDirectory, Manifest manifestObject) throws IOException {
         destinationDirectory.mkdir();
         if (sourceDirectory.isDirectory()) {
             // Returns an array of strings naming the files and directories in sourceDirectory
@@ -58,7 +58,7 @@ public class scm {
                 // Creates a new File instance from a parent abstract pathname and a child pathname string.
                 File sourceTemp = new File(sourceDirectory, file);
                 File destinationTemp = new File(destinationDirectory, file);
-                createRepo(sourceTemp, destinationTemp);
+                createRepo(sourceTemp, destinationTemp, manifestObject);
             }
         }
         else {
@@ -66,6 +66,15 @@ public class scm {
             File leafDirectory = new File(destinationDirectory.toString(), checkSum(sourceDirectory));
             // Copies file into directory with its name
             Files.copy(sourceDirectory.toPath(), leafDirectory.toPath());
+            
+            /*
+             * Code to pass file name, artifact file name, and original path back to manifest
+             */
+            String sourceFileName = sourceDirectory.getName();
+            String artifactFileName = leafDirectory.getName();
+            String sourcePath = sourceDirectory.getPath();
+            
+            manifestObject.addFileNames(sourceFileName, artifactFileName, sourcePath);
         }
     }
 	
@@ -81,8 +90,26 @@ public class scm {
         
         Manifest mani = new Manifest("/Users/Jeimmi/Desktop/test_source/","/Users/Jeimmi/Desktop/test_destination","createRepo");
 
-       // s.createRepo(sourceFolder, destinationFolder);
+        s.createRepo(sourceFolder, destinationFolder,mani);
+        
+        //Creating archived
+        File archiveFolder = new File(destinationFolder.getPath() + "/Archive");
+        archiveFolder.mkdir();
+        
         mani.userCommands(manifest, mani.getmUserCommand());
+        
+        for(int i = 0; i < mani.mArtifactFileNames.size() - 1; i++) {
+	    	String sourceFileName = mani.mSourceFileNames.get(i);
+	    	String artifactFileName = mani.mArtifactFileNames.get(i);
+	    	String sourcePath = mani.mSourcePaths.get(i);
+
+	    	mani.writeToFile(manifest, sourceFileName + ", " + artifactFileName + ", " + sourcePath+"\n");
+
+	    	//mani.writeToFile(manifest, artifactFileName);
+	    	//mani.writeToFile(manifest, sourceFileName);
+
+	    	System.out.println(sourceFileName + ", " + artifactFileName + ", " + sourcePath);
+	    }
     	
     }
 
