@@ -17,11 +17,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
+import java.util.Scanner;
 import java.nio.file.Paths;
 
 public class scm {
 	
-	
+	public void userCommands(File manifest){
+ 
+		System.out.println("1. Create new repo");
+    	Scanner s = new Scanner(System. in);
+    	int input = s.nextInt();
+		int userIn = input;
+		switch(userIn){
+		case 1:
+			break;
+		}
+	}
 	
 	public String checkSum(File file) throws IOException{
         String temp = new String(Files.readAllBytes(Paths.get(file.getPath())));
@@ -66,7 +77,12 @@ public class scm {
 
         File destinationFolder = new File("/Users/Jeimmi/Desktop/test_destination" + sourceFolder.getName());
 
-        s.createRepo(sourceFolder, destinationFolder);
+        File manifest = new File ("/Users/Jeimmi/Desktop/manifest.txt");
+        
+        Manifest mani = new Manifest("/Users/Jeimmi/Desktop/test_source/","/Users/Jeimmi/Desktop/test_destination","createRepo");
+
+       // s.createRepo(sourceFolder, destinationFolder);
+        mani.userCommands(manifest, mani.getmUserCommand());
     	
     }
 
