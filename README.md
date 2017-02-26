@@ -1,7 +1,9 @@
-#SCM
-Contact Information: Govinda Escobar, Jeimmi Gomez, William Lee
-File List:SCM.java, Manifest.java
-Installation/Run: 
+##SCM
+#Contact Information: 
+Govinda Escobar, Jeimmi Gomez, William Lee
+#File List:
+SCM.java, Manifest.java
+#Installation/Run: 
   OS: Windows
   IDE: Eclipse
   Instructions to Run:
