@@ -23,7 +23,6 @@ import java.nio.file.Paths;
 public class scm {
 	
 	public void userCommands(File manifest){
- 
 		System.out.println("1. Create new repo");
     	Scanner s = new Scanner(System. in);
     	int input = s.nextInt();
@@ -34,21 +33,38 @@ public class scm {
 		}
 	}
 	
+	/**
+	 * CheckSum method to create the checksum given any file
+	 * Algorithm used is prime weights multiplying by ASCII value and summing total
+	 * @param file - Any file to find checksum of
+	 * @return The check sum value and string of file name
+	 * @throws IOException
+	 */
 	public String checkSum(File file) throws IOException{
         String temp = new String(Files.readAllBytes(Paths.get(file.getPath())));
         int tempLength = temp.length();
         int checkSumTotal = 0;
-        int[] checkSumWeights = new int[] {1, 3, 11, 17};
+        int[] checkSumWeights = new int[] {1, 3, 11, 17}; //The prime weights for the checksum
+        
+        //Loop through every character in text file
         for (int i = 0; i < tempLength; i++){
-            checkSumTotal +=  checkSumWeights[i % 4]* (int)temp.charAt(i);
+        	//Cast each character into an int for the value. Mod the interator by 4 to figure out the prime weight
+            checkSumTotal +=  checkSumWeights[i % 4]* (int)temp.charAt(i); 
         }
-        temp = file.getName();
+        temp = file.getName(); //Get the file name
         return Integer.toString(checkSumTotal) + "." + Long.toString(file.length()) + temp.substring(temp.lastIndexOf("."));
     }
 	
+	/**
+	 * Recursive function to loop through tree of directory. 
+	 * @param sourceDirectory
+	 * @param destinationDirectory
+	 * @param manifestObject
+	 * @throws IOException
+	 */
     private void createRepo(File sourceDirectory, File destinationDirectory, Manifest manifestObject) throws IOException {
         destinationDirectory.mkdir();
-        if (sourceDirectory.isDirectory()) {
+        if (sourceDirectory.isDirectory()) { //When it is a folder
             // Returns an array of strings naming the files and directories in sourceDirectory
             String files[] = sourceDirectory.list();
 
@@ -61,7 +77,7 @@ public class scm {
                 createRepo(sourceTemp, destinationTemp, manifestObject);
             }
         }
-        else {
+        else { //When it is a file
             // Creates directory with file name
             File leafDirectory = new File(destinationDirectory.toString(), checkSum(sourceDirectory));
             // Copies file into directory with its name
@@ -78,32 +94,54 @@ public class scm {
         }
     }
 	
+    /**
+     * Write to a text file
+     * @param file - The file to write to
+     * @param content - The string to write to given file
+     * @throws IOException
+     */
+	public static void writeToFile(File file, String content) throws IOException
+	{
+	    StringBuilder newFile = new StringBuilder();
+	    String edited = content;
+	    newFile.append(edited);
+	    FileWriter fstreamWrite = new FileWriter(file,true);
+	    BufferedWriter out = new BufferedWriter(fstreamWrite);
+	    out.write(newFile.toString());
+	    out.newLine();
+	    out.close();
+	}
+    
 
     public static void main(String[] args) throws IOException
     {
     	scm s = new scm();
-        File sourceFolder = new File("/Users/Jeimmi/Desktop/test_source/");
+        File sourceFolder = new File("C:\\Users\\wills\\Desktop\\test_source");
 
-        File destinationFolder = new File("/Users/Jeimmi/Desktop/test_destination" + sourceFolder.getName());
-
-        File manifest = new File ("/Users/Jeimmi/Desktop/manifest.txt");
+        File destinationFolder = new File("C:\\Users\\wills\\Desktop\\test_destination" + sourceFolder.getName());
         
-        Manifest mani = new Manifest("/Users/Jeimmi/Desktop/test_source/","/Users/Jeimmi/Desktop/test_destination","createRepo");
-
-        s.createRepo(sourceFolder, destinationFolder,mani);
         
-        //Creating archived
-        File archiveFolder = new File(destinationFolder.getPath() + "/Archive");
+        Manifest manifestObject = new Manifest(sourceFolder.getPath(), destinationFolder.getPath(),"createRepo");
+
+        s.createRepo(sourceFolder, destinationFolder,manifestObject);
+        
+        //Creating archived folder in the repository
+        File archiveFolder = new File(destinationFolder.getPath() + "\\Archive");
         archiveFolder.mkdir();
         
-        mani.userCommands(manifest, mani.getmUserCommand());
+        //Put manifest file into archive folder
+        File manifestTextFile = new File (archiveFolder + "\\" + manifestObject.getmManifestTitle() + ".txt");
         
-        for(int i = 0; i < mani.mArtifactFileNames.size() - 1; i++) {
-	    	String sourceFileName = mani.mSourceFileNames.get(i);
-	    	String artifactFileName = mani.mArtifactFileNames.get(i);
-	    	String sourcePath = mani.mSourcePaths.get(i);
+        manifestObject.userCommands(manifestTextFile, manifestObject.getmUserCommand());
+        writeToFile(manifestTextFile, "createRepo");
+        
+        
+        for(int i = 0; i < manifestObject.mArtifactFileNames.size() - 1; i++) {
+	    	String sourceFileName = manifestObject.mSourceFileNames.get(i);
+	    	String artifactFileName = manifestObject.mArtifactFileNames.get(i);
+	    	String sourcePath = manifestObject.mSourcePaths.get(i);
 
-	    	mani.writeToFile(manifest, sourceFileName + ", " + artifactFileName + ", " + sourcePath+"\n");
+	    	writeToFile(manifestTextFile, sourceFileName + ", " + artifactFileName + ", " + sourcePath);
 
 	    	//mani.writeToFile(manifest, artifactFileName);
 	    	//mani.writeToFile(manifest, sourceFileName);
