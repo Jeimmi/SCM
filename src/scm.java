@@ -140,11 +140,11 @@ public class scm {
         s.createRepo(sourceFolder, destinationFolder,manifestObject);
         
         //Creating archived folder in the repository
-        File archiveFolder = new File(destinationFolder.getPath() + "\\Archive");
+        File archiveFolder = new File(destinationFolder.getPath(), "Archive");
         archiveFolder.mkdir();
         
         //Put manifest file into archive folder
-        File manifestTextFile = new File (archiveFolder + "\\" + manifestObject.getmManifestTitle() + ".txt");
+        File manifestTextFile = new File (archiveFolder, manifestObject.getmManifestTitle() + ".txt");
         
         manifestObject.userCommands(manifestTextFile, manifestObject.getmUserCommand());
         writeToFile(manifestTextFile, "createRepo");
