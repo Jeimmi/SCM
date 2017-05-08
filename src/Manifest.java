@@ -38,26 +38,31 @@ public class Manifest {
         Date dateObj = new Date();
         mManifestTitle = "543-p1_GEL_" + manifestDate.format(dateObj) + "_" + manifestTime.format(dateObj) + "_" + userCom;
 
-        //Creating activity directory in the repository
-        File activityDirectory = new File(mTarget.getPath(), "Activity");
-        activityDirectory.mkdir();
-
-        //Put manifest file into archive folder
-        File manifestTextFile = new File (activityDirectory, getmManifestTitle() + ".txt");
+        //Create or update activity directory in the repository
+        File activityDirectory, manifestTextFile;
+        if (userCom != "checkOut") {
+            activityDirectory = new File(mTarget.getPath(), "Activity");
+            activityDirectory.mkdir();
+            manifestTextFile = new File (activityDirectory, getmManifestTitle() + ".txt");
+        }
+        else {
+            manifestTextFile = new File (mSource.getParent(), getmManifestTitle() + ".txt");
+        }
 
         //Write target & source information to manifest
-        writeToFile(manifestTextFile, "createRepo(sourceDirectory, targetDirectory)");
+        writeToFile(manifestTextFile, userCom + "(sourceDirectory, targetDirectory)");
         writeToFile(manifestTextFile, "  source directory path: " + mSource.getPath());
         writeToFile(manifestTextFile, "  target directory path: " + mTarget.getPath());
 
         //Write file & artifact information to manifest
         File leaf, parent;
-        for(int i = 2, manifestSize = sourceFiles.size() - 1; i < manifestSize; i++) {
+        for(int i = 2, manifestSize = sourceFiles.size(); i < manifestSize; i++) {
             leaf = (File) sourceFiles.get(i);
-            parent = leaf.getParentFile();
-            writeToFile(manifestTextFile, "    " + parent.getName() + ", " + leaf.getName() + ", " + leaf.getPath());
+            if (leaf.isFile()) {
+                parent = leaf.getParentFile();
+                writeToFile(manifestTextFile, "    " + parent.getName() + ", " + leaf.getName() + ", " + leaf.getPath());
+            }
         }
-
     }
 
 
@@ -72,49 +77,15 @@ public class Manifest {
         StringBuilder newFile = new StringBuilder();
         String edited = content;
         newFile.append(edited);
-        FileWriter fstreamWrite = new FileWriter(file,true);
-        BufferedWriter out = new BufferedWriter(fstreamWrite);
+        FileWriter fStreamWrite = new FileWriter(file,true);
+        BufferedWriter out = new BufferedWriter(fStreamWrite);
         out.write(newFile.toString());
         out.newLine();
         out.close();
     }
-/*
-    public void userCommands(File manifest,String userCom) throws IOException{
-        String command = null;
-        switch(userCom){
-            case "createRepo":
-                command = userCom+": "+this.getmSourcePath()+" "+this.getmTargetPath()+"\n";
-                break;
-        }
-    }
-*/
 
     public String getmManifestTitle() {
         return mManifestTitle;
     }
-
-    /*
-    public void setmManifestTitle(String mManifestTitle) {
-        this.mManifestTitle = mManifestTitle;
-    }
-    public String getmUserCommand() {
-        return mUserCommand;
-    }
-    public void setmUserCommand(String mUserCommand) {
-        this.mUserCommand = mUserCommand;
-    }
-    public String getmSourcePath() {
-        return mSourcePath;
-    }
-    public void setmSourcePath(String mSourcePath) {
-        this.mSourcePath = mSourcePath;
-    }
-    public String getmTargetPath() {
-        return mTargetPath;
-    }
-    public void setmTargetPath(String mTargetPath) {
-        this.mTargetPath = mTargetPath;
-    }
-*/
 
 }
