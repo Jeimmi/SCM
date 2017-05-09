@@ -46,7 +46,7 @@ public class Manifest {
             manifestTextFile = new File (activityDirectory, getmManifestTitle() + ".txt");
         }
         else {
-            manifestTextFile = new File (mSource.getParent(), getmManifestTitle() + ".txt");
+            manifestTextFile = new File (mSource, getmManifestTitle() + ".txt");
         }
 
         //Write target & source information to manifest

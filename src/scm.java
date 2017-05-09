@@ -7,6 +7,14 @@
  * all of its directories, & all of its files. For files, it creates a new directory with the file name &
  * stores the file in that directory
  *
+ *  Example user input for createRepo and checkIn:
+ *   source = C:\Users\LeonardoDaVinci\Desktop\test_source
+ *   target = C:\Users\LeonardoDaVinci\Desktop\target
+ *
+ * Example user input for checkOut:
+ *   source = C:\Users\LeonardoDaVinci\Desktop\target\test_source
+ *   target = C:\Users\LeonardoDaVinci\Desktop\test_source
+ *   timeStamp = 20170508_1110
  */
 import java.io.*;
 import java.nio.file.Files;
@@ -14,8 +22,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
 import java.nio.file.Paths;
 import java.util.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.io.File;
+
 
 public class scm {
     //It contains stores the source and target directories and the files in the source directory (in that order)
@@ -85,96 +94,84 @@ public class scm {
         }
     }
 
-    private void checkOut(File manifest, File targetDirectory) throws IOException {
-        List<String> manLines = Files.readAllLines(manifest.toPath(), StandardCharsets.UTF_8);
-        String file = manLines.get(2);
-        file = file.substring(file.lastIndexOf(" ") + 1);
-        File rFile = new File(file);
-        file = rFile.getParent();
-        int repoFileLength = file.length();
-        for (int i = 3, len = manLines.size(); i < len; i++) {
-            file = manLines.get(i);
-            file = file.substring(file.lastIndexOf(" ") + 1);
-            rFile = new File(file);
-            this.sourceFiles.add(rFile);
-            file = rFile.getParent();
-            if (file != null) {
-                file = file.substring(repoFileLength + 1);
-                File target = new File(targetDirectory, file);
-                target.mkdirs();
-                Files.copy(rFile.toPath(),target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+    private void checkOut(File repoName, File projectName, String timeStamp) throws IOException {
+        File manFile = new File(repoName.getPath(), "Activity");
+
+
+        this.sourceFiles.add(manFile);
+        this.sourceFiles.add(projectName);
+
+        File manFiles[] = manFile.listFiles();
+        for (File file : manFiles) {
+            if (file.getName().matches("(.*)" + timeStamp + "(.*)")) {
+                manFile = file;
+                break;
             }
+        }
+
+        try {
+
+            List<String> manLines = Files.readAllLines(manFile.toPath(), StandardCharsets.UTF_8);
+            String manLine = manLines.get(2);
+            manLine = manLine.substring(manLine.lastIndexOf(" ") + 1);
+            File rFile = new File(manLine);
+            manLine = rFile.getParent();
+            int repoFileLength = manLine.length();
+            for (int i = 3, len = manLines.size(); i < len; i++) {
+                manLine = manLines.get(i);
+                manLine = manLine.substring(manLine.lastIndexOf(" ") + 1);
+                rFile = new File(manLine);
+                this.sourceFiles.add(rFile);
+                manLine = rFile.getParent();
+                if (manLine != null) {
+                    manLine = manLine.substring(repoFileLength + 1);
+                    File target = new File(projectName.getParent(), manLine);
+                    target.mkdirs();
+                    Files.copy(rFile.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+        }
+        catch(NullPointerException e)
+        {
+            System.out.print("NullPointerException Caught");
         }
     }
 
     public static void main(String[] args) throws IOException {
 
-
-/*
-Scanner scanner = new Scanner(System.in);
-
-        //Get input source and target path from user
-        System.out.println("Enter Path for Source Folder");
-        File sourceDirectory = new File(scanner.nextLine());
-        System.out.println("Enter Path for Target Repo Folder");
-        File targetDirectory = new File(scanner.nextLine());
- */
-        Scanner scanner = new Scanner(System.in);
-
-        scm s = new scm();
-
-/*
-        File sourceDirectory = new File("C:\\Users\\LeonardoDaVinci\\Desktop\\test_source");
-        File targetDirectory = new File("C:\\Users\\LeonardoDaVinci\\Desktop\\target", sourceDirectory.getName());
-        s.sourceFiles.add(sourceDirectory);
-        s.sourceFiles.add(targetDirectory);
-        s.createRepo(sourceDirectory, targetDirectory);
-        Manifest manifestCreate = new Manifest(s.sourceFiles,"createRepo");
-
-
-C:\Users\LeonardoDaVinci\Desktop\target\test_source\Activity\543-p1_GEL_20170507_1632_createRepo.txt
-C:\Users\LeonardoDaVinci\Desktop\checkOut
-*/
-
-
-        System.out.println("Enter Path for Source Folder");
-        File manFile = new File(scanner.nextLine());
-        System.out.println("Enter Path for Target Repo Folder");
-        File target = new File(scanner.nextLine());
- //       File target = new File("C:\\Users\\LeonardoDaVinci\\Desktop\\checkOut");
-   //     File manFile = new File("C:\\Users\\LeonardoDaVinci\\Desktop\\target\\test_source\\Activity\\543-p1_GEL_20170507_0305_createRepo.txt");
-        s.sourceFiles.add(manFile);
-        s.sourceFiles.add(target);
-        s.checkOut(manFile, target);
-        Manifest manifestOut = new Manifest(s.sourceFiles,"checkOut");
-
-
-        /*
         Scanner scanner = new Scanner(System.in);
         scm s = new scm();
         System.out.println("Please select an option: 1. CreateRepo, 2. CheckIn, 3. CheckOut");
-        int selection = scanner.nextInt();
+        int selection = Integer.parseInt(scanner.nextLine());
         //Get input source and target path from user
-        System.out.println("Enter Path for Source Folder");
-        File sourceDirectory = new File(scanner.nextLine());
-        System.out.println("Enter Path for Target Repo Folder");
-        File targetDirectory = new File(scanner.nextLine(), sourceDirectory.getName());
-        s.sourceFiles.add(sourceDirectory);
-        s.sourceFiles.add(targetDirectory);
-        switch(selection) {
-            case 1:
+
+        System.out.println("Please enter the path of the source directory");
+        String sourceStr = scanner.nextLine();
+        System.out.println("Please enter the path of the target directory");
+        String targetStr = scanner.nextLine();
+
+        if (selection == 1 || selection == 2) {
+            File sourceDirectory = new File(sourceStr);
+            File targetDirectory = new File(targetStr, sourceDirectory.getName());
+            s.sourceFiles.add(sourceDirectory);
+            s.sourceFiles.add(targetDirectory);
+            if (selection == 1) {
                 s.createRepo(sourceDirectory, targetDirectory);
                 Manifest manifestCreate = new Manifest(s.sourceFiles,"createRepo");
-                break;
-            case 2:
+            }
+            else {
                 s.checkIn(sourceDirectory, targetDirectory);
                 Manifest manifestIn = new Manifest(s.sourceFiles,"checkIn");
-                break;
-            case 3:
-                s.checkOut(sourceDirectory, targetDirectory);
-     //           Manifest manifestOut = new Manifest(s.sourceFiles,"checkOut");
-                break;
+            }
         }
-*/
+        else {
+            File targetDirectory = new File(targetStr);
+            File sourceDirectory = new File(sourceStr);
+            System.out.println("Please enter the time stamp (YYYYMMDD_HHMM)");
+            String timeStamp = scanner.nextLine();
+            s.checkOut(sourceDirectory, targetDirectory, timeStamp);
+            Manifest manifestOut = new Manifest(s.sourceFiles,"checkOut");
+        }
     }
 }
